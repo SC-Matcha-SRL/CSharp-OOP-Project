@@ -1,4 +1,4 @@
-Matcha Store Network (C# OOP Project)
+#Matcha Store Network (C# OOP Project)
 
 A C#/.NET application that manages a small network of matcha shops (“matcheries”), allowing clients to buy matcha products, reserve tables, and track transaction history, while admins manage shops, reservation types, and monitor overall activity.
 
