@@ -20,9 +20,9 @@ public class Matcha
     
 public class Matcherie
 {
-    private string Nume { get; set; }
-    private string Program { get; set;  } 
-    private int Capacitate { get; set; }
+    public string Nume { get; private set; }
+    public string Program { get; private set;  } 
+    public int Capacitate { get; private set; }
     private List<Matcha> Meniu {get; set;}
 
     public Matcherie(string nume, string program, int Capa, List<Matcha> meniu)
@@ -31,5 +31,20 @@ public class Matcherie
         Program = program;
         this.Capacitate= Capa;
         this.Meniu = meniu;
+    }
+    public void SetProgram(string noulProgram)
+    {
+        if (!string.IsNullOrEmpty(noulProgram))
+        {
+            this.Program = noulProgram;
+        }
+    }
+
+    public void SetCapacitate(int nouaCapacitate)
+    {
+        if (nouaCapacitate > 0) 
+        {
+            this.Capacitate = nouaCapacitate;
+        }
     }
 }
