@@ -1,5 +1,5 @@
 namespace ConsoleApp5;
-
+using Spectre.Console;
 public class Matcha
 {
     public string nume { get; set; }
@@ -23,14 +23,36 @@ public class Matcherie
     public string Nume { get; private set; }
     public string Program { get; private set;  } 
     public int Capacitate { get; private set; }
-    private List<Matcha> Meniu {get; set;}
-
-    public Matcherie(string nume, string program, int Capa, List<Matcha> meniu)
+    public List<Matcha> Meniu {get; private set;}
+    public List<Rezervare> Rezervari {get; private set;}
+    public void AfiseazaMeniu()
+    {
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .BorderColor(Color.Green)
+            .Title($"[bold white on green] MENIU {Nume.ToUpper()} [/]");
+        table.AddColumn("[bold]Produs[/]");
+        table.AddColumn("[bold]Descriere[/]");
+        table.AddColumn(new TableColumn("[bold]Preț[/]").Centered());
+        table.AddColumn(new TableColumn("[bold]Calorii[/]").Centered());
+        foreach (var item in Meniu)
+        {
+            table.AddRow(
+                $"[green]{item.nume}[/]",
+                $"[grey]{item.descriere}[/]",
+                $"[yellow]{item.pret} RON[/]",
+                $"{item.calorii} kcal"
+            );
+        }
+        AnsiConsole.Write(table);
+    }
+    public Matcherie(string nume, string program, int Capa, List<Matcha> meniu, List<Rezervare> rezervari)
     {
         Nume = nume;
         Program = program;
         this.Capacitate= Capa;
         this.Meniu = meniu;
+        this.Rezervari=rezervari;
     }
     public void SetProgram(string noulProgram)
     {
@@ -47,4 +69,16 @@ public class Matcherie
             this.Capacitate = nouaCapacitate;
         }
     }
-}///dsadasdsadsa
+
+    public bool StergeRezervare(Rezervare rezervare)
+    {
+        if (rezervare == null) return false;
+        if (Rezervari.Contains(rezervare))
+        {
+            Rezervari.Remove(rezervare);
+            return true;
+        }
+
+        return false;
+    }
+}

@@ -19,18 +19,20 @@ public class Tranzactie
 public class Rezervare
 {
     public string Tip { get; private set; }//masa 2 persoane ex
+    public Matcherie Matcherie { get; private set; }
     private string ClientID { get; set; }
     public decimal Pret { get; private set; }
     public string limitari { get; private set; }
     public string beneficii { get; private set; }
 
-    public Rezervare(string tip, decimal pret, string limitari, string beneficii)
+    public Rezervare(string tip, decimal pret, string limitari, string beneficii,string clientId,Matcherie matcherie)
     {
         Tip = tip;
         Pret = pret;
         this.limitari = limitari;
         this.beneficii = beneficii;
-        this.ClientID = this.beneficii;
+        this.ClientID = clientId;
+        this.Matcherie = matcherie;
     }
     
     

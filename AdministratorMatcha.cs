@@ -95,7 +95,7 @@ public class AdministratorMatcha
         decimal pret = AnsiConsole.Ask<decimal>("Introduceți prețul rezervării:");
         string limitari = AnsiConsole.Ask<string>("Introduceti limitările rezervării: ");
         string beneficii = AnsiConsole.Ask<string>("Introduceti beneficiile rezervării: ");
-        Rezervare nouaRezervare = new Rezervare(tip, pret, limitari, beneficii);
+        Rezervare nouaRezervare = new Rezervare(tip, pret, limitari, beneficii, c.Nume,m);
         AnsiConsole.MarkupLine("[bold green]Succes:[/] Rezervarea pentru [blue]{0}[/] a fost configurată!", m.Nume);
         return nouaRezervare;
     }
