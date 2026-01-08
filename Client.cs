@@ -107,10 +107,21 @@ public class Client
             AnsiConsole.MarkupLine("[red]Ne pare rău, magazinul este plin![/]");
             return null;
         }
+        if (m.Rezervari.Count >= m.Capacitate)
+        {
+            AnsiConsole.MarkupLine("[red]Ne pare rău, magazinul este plin![/]");
+            return null;
+        }
+
         Rezervare nouaRezervare = admin.creazaRezervare(m, this);
-        nouaRezervare.SetClientID(this.Nume);
-        m.Rezervari.Add(nouaRezervare);
-        this.Rezervari.Add(nouaRezervare);
+        if (nouaRezervare != null)
+        {
+            nouaRezervare.SetClientID(this.Nume);
+            m.Rezervari.Add(nouaRezervare);
+            // Scoate linia de mai jos dacă o adaugi deja în Program.cs, 
+            // sau păstreaz-o aici și nu o mai adăuga în Program.cs
+            // this.Rezervari.Add(nouaRezervare); 
+        }
         return nouaRezervare;
     }
 

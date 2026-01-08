@@ -7,7 +7,7 @@ public class SistemMatcha
     public List<Matcherie> Magazine { get; set; }
     public List<Client> Clienti { get; set; }
     public List<AdministratorMatcha> Administratori { get; set; }
-
+    public SistemMatcha() { }//pt Json
     [JsonConstructor]
     public SistemMatcha(List<Matcherie> magazine, List<Client> clienti, List<AdministratorMatcha> administratori)
     {

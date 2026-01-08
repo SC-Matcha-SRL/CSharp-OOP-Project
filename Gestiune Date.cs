@@ -14,17 +14,27 @@ public static class GestiuneDate
     private static string _caleFisier = "baza_date_matcha.json";
     public static void SalveazaTot(SistemMatcha sistem)
     {
-        string json = JsonSerializer.Serialize(sistem, _optiuni);
-        File.WriteAllText(_caleFisier, json);
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            // Această linie permite salvarea obiectelor care se referă unul la altul
+            ReferenceHandler = ReferenceHandler.IgnoreCycles 
+        };
+
+        string jsonString = JsonSerializer.Serialize(sistem, options);
+        File.WriteAllText("baza_date_matcha.json", jsonString);
     }
 
     public static SistemMatcha IncarcaTot()
     {
-        if (!File.Exists(_caleFisier)) 
+        if (!File.Exists("baza_date_matcha.json")) return new SistemMatcha();
+
+        string jsonString = File.ReadAllText("baza_date_matcha.json");
+        var options = new JsonSerializerOptions
         {
-            return new SistemMatcha(new List<Matcherie>(), new List<Client>(), new List<AdministratorMatcha>());// Dacă nu există fișierul, returnăm un sistem gol pentru a nu da eroare
-        }
-        string json = File.ReadAllText(_caleFisier);
-        return JsonSerializer.Deserialize<SistemMatcha>(json, _optiuni);
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        };
+
+        return JsonSerializer.Deserialize<SistemMatcha>(jsonString, options) ?? new SistemMatcha();
     }
 }

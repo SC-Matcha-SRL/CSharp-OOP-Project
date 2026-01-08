@@ -28,11 +28,11 @@ public class Matcherie
     public List<Matcha> Meniu {get; private set;}
     public List<Rezervare> Rezervari {get; private set;}
     [JsonConstructor]
-    public Matcherie(string nume, string program, int Capacitate, List<Matcha> meniu, List<Rezervare> rezervari)
+    public Matcherie(string nume, string program, int capacitate, List<Matcha> meniu, List<Rezervare> rezervari)
         {
             Nume = nume;
             Program = program;
-            Capacitate= Capacitate;
+            Capacitate= capacitate;
             Meniu = meniu;
             Rezervari=rezervari;
         }public void AfiseazaMeniu()

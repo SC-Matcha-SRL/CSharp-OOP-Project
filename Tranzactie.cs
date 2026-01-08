@@ -18,20 +18,20 @@ public class Tranzactie
 
 public class Rezervare
 {
-    public string Tip { get; private set; }//masa 2 persoane ex
-    public Matcherie Matcherie { get; private set; }
-    private string ClientID { get; set; }
-    public decimal Pret { get; private set; }
-    public string Limitari { get; private set; }
-    public string Beneficii { get; private set; }
+    public string Tip { get; set; }
+    public decimal Pret { get; set; }
+    public string Limitari { get; set; }
+    public string Beneficii { get; set; }
+    public string ClientID { get; set; }
+    public Matcherie Matcherie { get; set; }
     [JsonConstructor]
-    public Rezervare(string tip, decimal pret, string limitari, string beneficii,string clientId, Matcherie matcherie)
+    public Rezervare(string tip, decimal pret, string limitari, string beneficii, string clientID, Matcherie matcherie)
     {
         Tip = tip;
         Pret = pret;
         Limitari = limitari;
         Beneficii = beneficii;
-        ClientID = clientId;
+        ClientID = clientID;
         Matcherie = matcherie;
     }
     
