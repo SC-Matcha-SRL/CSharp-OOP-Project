@@ -17,21 +17,41 @@ public static class Meniuri
         var tabelProduse = new Table()
             .Border(TableBorder.Rounded)
             .BorderColor(Color.Green)
-            .Title("[bold green]🍵 MENIU MATCHA[/]")
+            .Title("[bold green]🍵 REȚEAUA DE MATCHERII[/]")
             .AddColumn("Magazin")
             .AddColumn("Produs")
             .AddColumn(new TableColumn("Preț").Centered());
-
-        foreach (var magazin in sistem.Magazine)
+        if (sistem.Magazine != null && sistem.Magazine.Count > 0)
         {
-            foreach (var produs in magazin.Meniu)
+            foreach (var magazin in sistem.Magazine)
             {
-                tabelProduse.AddRow(
-                    magazin.Nume, 
-                    produs.nume, 
-                    $"[yellow]{produs.pret} RON[/]"
-                );
+                // Dacă magazinul are produse, le listăm pe toate
+                if (magazin.Meniu != null && magazin.Meniu.Count > 0)
+                {
+                    foreach (var produs in magazin.Meniu)
+                    {
+                        tabelProduse.AddRow(
+                            Markup.Escape(magazin.Nume), 
+                            Markup.Escape(produs.nume), 
+                            $"[yellow]{produs.pret} RON[/]"
+                        );
+                    }
+                }
+                else
+                {
+                    // Dacă magazinul e nou și nu are produse, ÎL AFIȘĂM ORICUM
+                    // Astfel clientul știe că locația există
+                    tabelProduse.AddRow(
+                        $"[blue]{Markup.Escape(magazin.Nume)}[/]", 
+                        "[grey italic]În curând... (meniu indisponibil)[/]", 
+                        "-"
+                    );
+                }
             }
+        }
+        else
+        {
+            tabelProduse.AddRow("[red]Eroare[/]", "[red]Nu există magazine înregistrate în sistem![/]", "-");
         }
 
         // 3. Construim panoul de profil pentru client
