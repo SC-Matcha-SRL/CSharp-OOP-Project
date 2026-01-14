@@ -27,15 +27,18 @@ public class Matcherie
     public int Capacitate { get; private set; }
     public List<Matcha> Meniu {get; private set;}
     public List<Rezervare> Rezervari {get; private set;}
+    
     [JsonConstructor]
     public Matcherie(string nume, string program, int capacitate, List<Matcha> meniu, List<Rezervare> rezervari)
-        {
-            Nume = nume;
-            Program = program;
-            Capacitate= capacitate;
-            Meniu = meniu;
-            Rezervari=rezervari;
-        }public void AfiseazaMeniu()
+    {
+        Nume = nume;
+        Program = program;
+        Capacitate = capacitate;
+        Meniu = meniu ?? new List<Matcha>();
+        Rezervari = rezervari ?? new List<Rezervare>();
+
+    }
+    public void AfiseazaMeniu()
     {
         var table = new Table()
             .Border(TableBorder.Rounded)

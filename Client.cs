@@ -9,13 +9,14 @@ public class Client
     public string Email{get;private set;}
     public List<Tranzactie> Istoric { get; private set; }
     public  List<Rezervare> Rezervari { get; private set; }
+
     [JsonConstructor]
     public Client(string nume, string email, List<Tranzactie> istoric, List<Rezervare> rezervari)
     {
         Nume = nume;
         Email = email;
-        Istoric = istoric;
-        Rezervari = rezervari;
+        Istoric = istoric ?? new List<Tranzactie>();
+        Rezervari = rezervari ?? new List<Rezervare>();
     }
     public void VeziIstoric ()
     {
