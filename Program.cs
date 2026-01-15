@@ -37,16 +37,121 @@ namespace ConsoleApp5
                     case "Administrator":
                         RulareMeniuAdmin(sistem);
                         break;
+
                     case "Client":
-                        RulareMeniuClient(sistem);
+                    {
+                        var client = AlegeClientDinSistem(sistem);
+                        if (client != null)
+                            RulareMeniuClient(sistem, client);
                         break;
+                    }
+
+                    case "CreareCont":
+                        CreeazaContClient(sistem);
+                        break;
+
                     case "Ieșire":
                         SalvareSistem(sistem);
                         ruleazaProgramul = false;
                         break;
                 }
+
             }
         }
+        
+        static void CreeazaAdminNou(SistemMatcha sistem)
+        {
+            sistem.Administratori ??= new List<AdministratorMatcha>();
+
+            Console.Clear();
+            AnsiConsole.Write(new Rule("[green]Creare Administrator[/]").RuleStyle("grey"));
+
+            string nume = AnsiConsole.Ask<string>("Nume admin:");
+            string idNou = AnsiConsole.Ask<string>("Admin ID nou:");
+
+            // verificare duplicat
+            foreach (var a in sistem.Administratori)
+                if (a.AdminId == idNou)
+                {
+                    AnsiConsole.MarkupLine("[red]Există deja un administrator cu acest Admin ID.[/]");
+                    return;
+                }
+
+            string parolaNoua = AnsiConsole.Prompt(new TextPrompt<string>("Parolă nouă:").Secret());
+
+            // important: bind la lista de matcherii
+            sistem.Magazine ??= new List<Matcherie>();
+            var adminNou = new AdministratorMatcha(nume, idNou, parolaNoua, sistem.Magazine);
+
+            sistem.Administratori.Add(adminNou);
+
+            SalvareSistem(sistem);
+            AnsiConsole.MarkupLine("[green]Administrator creat și salvat![/]");
+        }
+
+        static void CreeazaContClient(SistemMatcha sistem)
+        {
+            sistem.Clienti ??= new List<Client>();
+
+            Console.Clear();
+            AnsiConsole.Write(new Rule("[green]Creare cont client[/]").RuleStyle("grey"));
+
+            string nume = AnsiConsole.Ask<string>("Nume client:");
+            string email = AnsiConsole.Ask<string>("Email:");
+
+            // email unic (recomandat)
+            foreach (var c in sistem.Clienti)
+                if (string.Equals(c.Email, email, StringComparison.OrdinalIgnoreCase))
+                {
+                    AnsiConsole.MarkupLine("[red]Există deja un client cu acest email.[/]");
+                    Pauza();
+                    return;
+                }
+
+            var clientNou = new Client(nume, email, new List<Tranzactie>(), new List<Rezervare>());
+            sistem.Clienti.Add(clientNou);
+
+            SalvareSistem(sistem);
+            AnsiConsole.MarkupLine("[green]Cont client creat și salvat![/]");
+            Pauza();
+        }
+
+        static Client? AlegeClientDinSistem(SistemMatcha sistem)
+        {
+            if (sistem.Clienti == null || sistem.Clienti.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]Nu există clienți. Creează un cont (tasta 4).[/]");
+                Pauza();
+                return null;
+            }
+
+            // Construim listă de afișare "Nume (email)"
+            var map = new Dictionary<string, Client>();
+            foreach (var c in sistem.Clienti)
+            {
+                string key = $"{c.Nume} ({c.Email})";
+                // dacă ai duplicate perfecte, facem key unic
+                int k = 2;
+                string temp = key;
+                while (map.ContainsKey(temp))
+                {
+                    temp = $"{key} #{k}";
+                    k++;
+                }
+                map[temp] = c;
+            }
+
+            Console.Clear();
+            string ales = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[bold green]Selectează clientul[/]")
+                    .PageSize(10)
+                    .AddChoices(map.Keys)
+            );
+
+            return map[ales];
+        }
+
 
         // --- 3. METODELE DE LOGICĂ (STATICE) ---
         
@@ -70,6 +175,7 @@ namespace ConsoleApp5
                             "2) Tipuri Rezervări (CRUD)",
                             "3) Tranzacții (creare/modificare/asociere client)",
                             "4) Monitorizare activitate",
+                            "5) Creează Administrator (cont nou)",
                             "Deconectare"
                         }));
 
@@ -89,6 +195,11 @@ namespace ConsoleApp5
 
                     case "4) Monitorizare activitate":
                         AfiseazaMonitorizare(sistem);
+                        Pauza();
+                        break;
+                    
+                    case "5) Creează Administrator (cont nou)":
+                        CreeazaAdminNou(sistem);
                         Pauza();
                         break;
 
@@ -969,13 +1080,14 @@ namespace ConsoleApp5
         }
 
 
-        static void RulareMeniuClient(SistemMatcha sistem)
+        static void RulareMeniuClient(SistemMatcha sistem, Client client)
         {
+            client = FixClientIfNeeded(sistem, client);
             bool inapoi = false;
             while (!inapoi)
             {
                 // Apelăm noua funcție de UI
-                Meniuri.AfiseazaDashboardClient(sistem.Clienti[0], sistem);
+                Meniuri.AfiseazaDashboardClient(client, sistem);
 
                 var optiune = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
@@ -992,13 +1104,13 @@ namespace ConsoleApp5
                 switch (optiune)
                 {
                     case "Comandă Matcha":
-                         NumeMagazinAles = sistem.Clienti[0].AfiseazaRestauranteSiAlegeUnul(sistem.Magazine);
-                        sistem.Clienti[0].Comanda(NumeMagazinAles, sistem.Magazine, sistem.Administratori[0]);
+                         NumeMagazinAles = client.AfiseazaRestauranteSiAlegeUnul(sistem.Magazine);
+                        client.Comanda(NumeMagazinAles, sistem.Magazine, sistem.Administratori[0]);
                         break;
                     case "Vizulaizează Rezervări":
                         Console.Clear(); // Curățăm ecranul pentru a vedea doar tabelul
     
-                        if (sistem.Clienti[0].Rezervari == null || sistem.Clienti[0].Rezervari.Count == 0)
+                        if (client.Rezervari == null || client.Rezervari.Count == 0)
                         {
                             AnsiConsole.MarkupLine("[yellow]Nu ai nicio rezervare activă momentan.[/]");
                         }
@@ -1009,7 +1121,7 @@ namespace ConsoleApp5
                                 .Border(TableBorder.Rounded)
                                 .BorderColor(Color.Orange1)
                                 .Title("[bold orange1]📅 REZERVĂRILE TALE[/]")
-                                .Caption("[grey]Total rezervări active: " + sistem.Clienti[0].Rezervari.Count + "[/]");
+                                .Caption("[grey]Total rezervări active: " + client.Rezervari.Count + "[/]");
 
                             tabel.AddColumn("[bold]Nr.[/]");
                             tabel.AddColumn("[bold]Locație[/]");
@@ -1017,9 +1129,9 @@ namespace ConsoleApp5
                             tabel.AddColumn("[bold]Beneficii[/]");
                             tabel.AddColumn(new TableColumn("[bold]Pret[/]").Centered());
 
-                            for (int i = 0; i < sistem.Clienti[0].Rezervari.Count; i++)
+                            for (int i = 0; i < client.Rezervari.Count; i++)
                             {
-                                var rez = sistem.Clienti[0].Rezervari[i];
+                                var rez = client.Rezervari[i];
                                 tabel.AddRow(
                                     (i + 1).ToString(),
                                     $"[cyan]{rez.Matcherie?.Nume ?? "Nespecificat"}[/]",
@@ -1036,7 +1148,7 @@ namespace ConsoleApp5
                         Console.ReadKey(true); // Oprește execuția până la apăsarea unei taste
                         break;
                     case "Rezervă Masă":
-                        NumeMagazinAles = sistem.Clienti[0].AfiseazaRestauranteSiAlegeUnul(sistem.Magazine);
+                        NumeMagazinAles = client.AfiseazaRestauranteSiAlegeUnul(sistem.Magazine);
                         if (string.IsNullOrEmpty(NumeMagazinAles)) break;
                         foreach (var magazin in sistem.Magazine)
                         {
@@ -1044,15 +1156,15 @@ namespace ConsoleApp5
                             {
                                 /*
                                 // Verificăm dacă lista Rezervari nu este null înainte de Add
-                                if (sistem.Clienti[0].Rezervari == null) 
-                                    sistem.Clienti[0].Rezervari = new List<Rezervare>();
+                                if (client.Rezervari == null) 
+                                    client.Rezervari = new List<Rezervare>();
                                 */
-                                var nouaRezervare = sistem.Clienti[0].rezervaMasa(magazin, sistem.Administratori[0]);
+                                var nouaRezervare = client.rezervaMasa(magazin, sistem.Administratori[0]);
             
                                 // Adăugăm în listă DOAR dacă metoda returnează obiectul și nu l-a adăugat deja intern
                                 if (nouaRezervare != null)
                                 {
-                                    sistem.Clienti[0].Rezervari.Add(nouaRezervare);
+                                    client.Rezervari.Add(nouaRezervare);
                                     AnsiConsole.MarkupLine("[green]Rezervare adăugată cu succes![/]");
                                 }
                             }
@@ -1062,7 +1174,7 @@ namespace ConsoleApp5
                         Console.ReadKey(true); // Oprește execuția până la apăsarea unei taste
                         break;
                     case "Anuleaza Rezervare Masă":
-                        if (sistem.Clienti[0].Rezervari == null || sistem.Clienti[0].Rezervari.Count == 0)
+                        if (client.Rezervari == null || client.Rezervari.Count == 0)
                         {
                             AnsiConsole.MarkupLine("[yellow]Nu ai nicio rezervare activă de anulat.[/]");
                             Console.ReadKey(true);
@@ -1073,7 +1185,7 @@ namespace ConsoleApp5
                             new SelectionPrompt<Rezervare>()
                                 .Title("Selectează rezervarea pe care dorești să o [red]anulezi[/]:")
                                 .PageSize(10)
-                                .AddChoices(sistem.Clienti[0].Rezervari)
+                                .AddChoices(client.Rezervari)
                                 .UseConverter(r => {
                                     // ESCAPARE: Protejăm textul împotriva interpretării ca stil/culoare
                                     string numeEscapat = Markup.Escape(r.Matcherie?.Nume ?? "Nespecificat");
@@ -1086,7 +1198,7 @@ namespace ConsoleApp5
                         {
                             // Ștergem din ambele liste
                             rezervareDeAnulat.Matcherie?.Rezervari.Remove(rezervareDeAnulat);//?-null conditional operator
-                            sistem.Clienti[0].Rezervari.Remove(rezervareDeAnulat);
+                            client.Rezervari.Remove(rezervareDeAnulat);
 
                             AnsiConsole.MarkupLine("[bold green]Rezervarea a fost anulată cu succes![/]");
                         }
@@ -1095,7 +1207,7 @@ namespace ConsoleApp5
                         break;
                     case "Istoric Tranzacții":
                         Console.Clear();
-                        if (sistem.Clienti[0].Istoric == null || sistem.Clienti[0].Istoric.Count == 0)
+                        if (client.Istoric == null || client.Istoric.Count == 0)
                         {
                             AnsiConsole.MarkupLine("[yellow]Nu ai nicio tranzacție înregistrată.[/]");
                         }
@@ -1110,7 +1222,7 @@ namespace ConsoleApp5
                             tabel.AddColumn("Magazin");
                             tabel.AddColumn(new TableColumn("Preț").RightAligned());
 
-                            foreach (var t in sistem.Clienti[0].Istoric)
+                            foreach (var t in client.Istoric)
                             {
                                 tabel.AddRow(
                                     t.Data.ToString("dd/MM/yyyy HH:mm"),
@@ -1233,16 +1345,19 @@ namespace ConsoleApp5
                     if (key.Key == ConsoleKey.D2 || key.Key == ConsoleKey.NumPad2)
                         return "Administrator";
 
-                    if (key.Key == ConsoleKey.D3 || key.Key == ConsoleKey.NumPad3 || key.Key == ConsoleKey.Escape)
+                    if (key.Key == ConsoleKey.D3 || key.Key == ConsoleKey.NumPad3)
+                        return "CreareCont";
+
+                    if (key.Key == ConsoleKey.D4 || key.Key == ConsoleKey.NumPad4 || key.Key == ConsoleKey.Escape)
                         return "Ieșire";
 
-                    // R = refresh manual (dacă vrei)
                     if (key.Key == ConsoleKey.R)
                     {
                         lastW = -1;
                         lastH = -1;
                     }
                 }
+
 
                 Thread.Sleep(80);
             }
@@ -1279,7 +1394,7 @@ namespace ConsoleApp5
             {
                 AnsiConsole.MarkupLine("[bold green]X Matcha[/]");
                 AnsiConsole.MarkupLine("[green]X marchează matcha[/]");
-                AnsiConsole.MarkupLine("[grey]1) Logare Client  2) Logare Administrator  3) Ieșire[/]");
+                AnsiConsole.MarkupLine("[grey]1) Logare Client  2) Logare Administrator  3) Creare cont  4) Ieșire (ESC)[/]");
                 AnsiConsole.MarkupLine("[grey](Mărește fereastra pentru UI complet)[/]");
                 return;
             }
@@ -1383,10 +1498,11 @@ namespace ConsoleApp5
             AnsiConsole.WriteLine();
             AnsiConsole.Write(
                 new Panel(new Markup(
-                    "[black on green]   1  LOGARE CLIENT           [/]\n" +
-                    "[black on green]   2  LOGARE ADMINISTRATOR    [/]\n\n" +
-                    "[white on darkred]   3  IESIRE (sau ESC)        [/] \n\n" +
-                    "[grey]Hint: poți redimensiona fereastra, UI-ul se reface automat. (R = refresh)[/]"
+                        "[black on green]   1  LOGARE CLIENT           [/]\n" +
+                        "[black on green]   2  LOGARE ADMINISTRATOR    [/]\n" +
+                        "[black on green]   3  CREARE CONT CLIENT      [/]\n\n" +
+                        "[white on darkred]   4  IESIRE (sau ESC)        [/] \n\n" 
+
                 ))
                 .Header("[bold green]Start[/]")
                 .Border(BoxBorder.Double)
