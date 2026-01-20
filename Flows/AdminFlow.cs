@@ -29,8 +29,8 @@ namespace ConsoleApp5
                         .Title($"[bold red]ADMIN PANEL[/] - Salut, [white]{Markup.Escape(admin.Nume)}[/]")
                         .AddChoices(new[]
                         {
-                            "1) Manage Matcheries (CRUD)",
-                            "2) Reservation Types (CRUD)",
+                            "1) Manage Matcheries",
+                            "2) Reservation Types",
                             "3) Transactions (create/modify/assign client)",
                             "4) Activity Monitoring",
                             "5) Create Admin Account",
@@ -39,11 +39,11 @@ namespace ConsoleApp5
 
                 switch (optiune)
                 {
-                    case "1) Manage Matcheries (CRUD)":
+                    case "1) Manage Matcheries":
                         SubmeniuMatcheries(sistem);
                         break;
 
-                    case "2) Reservation Types (CRUD)":
+                    case "2) Reservation Types":
                         SubmeniuReservationTypes(sistem);
                         break;
 
@@ -242,8 +242,8 @@ namespace ConsoleApp5
                         CommonUI.Pauza();
                         break;
 
-                    case "Products menu (CRUD)":
-                        SubmeniuProduse(sistem);
+                    case "Products menu":
+                        SubmeniuProduseGlobal(sistem);
                         break;
 
                     case "Back":
@@ -361,67 +361,59 @@ namespace ConsoleApp5
             AnsiConsole.MarkupLine("[green]Matchery deleted.[/]");
         }
 
-        // -------------------- PRODUCTS (CRUD) --------------------
+        // -------------------- PRODUCTS  --------------------
+        
 
-        private static void SubmeniuProduse(SistemMatcha sistem)
+        private static void SubmeniuProduseGlobal(SistemMatcha sistem)
         {
             if (sistem.Magazine == null || sistem.Magazine.Count == 0)
             {
-                AnsiConsole.MarkupLine("[yellow]No matcheries. Create one first.[/]");
+                AnsiConsole.MarkupLine("[yellow]Nu există matcherii în sistem.[/]");
                 CommonUI.Pauza();
                 return;
             }
-
-            Matcherie? matcherie = AlegeMatchery(sistem);
-            if (matcherie == null) return;
 
             bool inapoi = false;
             while (!inapoi)
             {
                 Console.Clear();
-                AnsiConsole.MarkupLine($"[bold green]Products[/] for: [white]{Markup.Escape(matcherie.Nume)}[/]");
+
+                AnsiConsole.Write(
+                    new Panel(AfiseazaToateMeniurile(sistem))
+                        .Header("[bold green]Meniuri - toate matcheriile[/]")
+                        .Border(BoxBorder.Rounded)
+                        .BorderColor(Color.Green)
+                        .Expand()
+                );
+
                 AnsiConsole.WriteLine();
 
                 var opt = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .Title("Choose action:")
+                        .Title("[bold]Product Management[/]")
                         .AddChoices(new[]
                         {
-                            "View menu",
-                            "Add product",
-                            "Edit product",
-                            "Delete product",
-                            "Switch matchery",
+                            "Manage one matchery",
                             "Back"
                         }));
 
                 switch (opt)
                 {
-                    case "View menu":
-                        Console.Clear();
-                        AfiseazaMeniuSafe(matcherie);
-                        CommonUI.Pauza();
-                        break;
+                    case "Manage one matchery":
+                    {
+                        var numeList = sistem.Magazine.Select(m => m.Nume).ToList();
+                        string ales = AnsiConsole.Prompt(
+                            new SelectionPrompt<string>()
+                                .Title("Alege matcheria de administrat:")
+                                .PageSize(10)
+                                .AddChoices(numeList));
 
-                    case "Add product":
-                        AdaugaProdus(matcherie, sistem);
-                        CommonUI.Pauza();
-                        break;
+                        var matcherie = sistem.Magazine.FirstOrDefault(m => m.Nume == ales);
+                        if (matcherie != null)
+                            SubmeniuProduseMatcherie(sistem, matcherie);
 
-                    case "Edit product":
-                        ModificaProdus(matcherie, sistem);
-                        CommonUI.Pauza();
                         break;
-
-                    case "Delete product":
-                        StergeProdus(matcherie, sistem);
-                        CommonUI.Pauza();
-                        break;
-
-                    case "Switch matchery":
-                        matcherie = AlegeMatchery(sistem);
-                        if (matcherie == null) return;
-                        break;
+                    }
 
                     case "Back":
                         inapoi = true;
@@ -429,6 +421,234 @@ namespace ConsoleApp5
                 }
             }
         }
+
+        private static void SubmeniuProduseMatcherie(SistemMatcha sistem, Matcherie matcherie)
+        {
+            if (matcherie.Meniu == null)
+            { 
+                AnsiConsole.MarkupLine("[red]Meniul matcheriei este null (date corupte).[/]");
+                CommonUI.Pauza();
+                return;
+            }
+
+            bool inapoi = false;
+            while (!inapoi)
+            {
+                Console.Clear();
+
+                AnsiConsole.Write(
+                    new Panel(AfiseazaMeniuDetaliat(matcherie))
+                        .Header($"[bold green]Meniu complet[/] - [white]{Markup.Escape(matcherie.Nume)}[/]")
+                        .Border(BoxBorder.Rounded)
+                        .BorderColor(Color.Green)
+                        .Expand()
+                    );
+
+                AnsiConsole.WriteLine();
+
+                var opt = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("Alege acțiunea:")
+                        .AddChoices(new[]
+                        {
+                            "Add product",
+                            "Edit product",
+                            "Delete product",
+                            "Back"
+                        }));
+                switch (opt)
+                        {
+                            case "Add product":
+                            {
+                                string nume = AnsiConsole.Ask<string>("Nume produs:");
+                                string descriere = AnsiConsole.Ask<string>("Descriere:");
+
+                                decimal pret = AnsiConsole.Prompt(
+                                    new TextPrompt<decimal>("Preț (RON):")
+                                        .ValidationErrorMessage("[red]Preț invalid.[/]")
+                                        .Validate(p => p >= 0));
+
+                                int stoc = AnsiConsole.Prompt(
+                                    new TextPrompt<int>("Stoc:")
+                                        .ValidationErrorMessage("[red]Stoc invalid.[/]")
+                                        .Validate(x => x >= 0));
+
+                                int kcal = AnsiConsole.Prompt(
+                                    new TextPrompt<int>("Calorii:")
+                                        .ValidationErrorMessage("[red]Calorii invalide.[/]")
+                                        .Validate(x => x >= 0));
+
+                                var produs = new Matcha(nume, descriere, pret, stoc, kcal);
+
+                                // Dacă ai coordinator DI, îl folosim (log + reguli). Dacă nu, fallback direct.
+                                var coord = TryGetCoordinator();
+                                if (coord != null)
+                                {
+                                    if (!coord.TryAdaugaProdus(matcherie, produs, out string mesaj))
+                                        AnsiConsole.MarkupLine($"[red]{Markup.Escape(mesaj)}[/]");
+                                    else
+                                        AnsiConsole.MarkupLine($"[green]{Markup.Escape(mesaj)}[/]");
+                                }
+                                else
+                                {
+                                    bool exista = matcherie.Meniu.Any(p =>
+                                        string.Equals(p.nume, produs.nume, StringComparison.OrdinalIgnoreCase));
+
+                                    if (exista)
+                                        AnsiConsole.MarkupLine("[red]Există deja un produs cu acest nume în meniu.[/]");
+                                    else
+                                    {
+                                        matcherie.Meniu.Add(produs);
+                                        AnsiConsole.MarkupLine("[green]Produs adăugat.[/]");
+                                    }
+                                }
+
+                                CommonUI.SalvareSistem(sistem);
+                                CommonUI.Pauza();
+                                break;
+                            }
+
+                            case "Edit product":
+                            {
+                                if (matcherie.Meniu.Count == 0)
+                                {
+                                    AnsiConsole.MarkupLine("[yellow]Nu există produse.[/]");
+                                    CommonUI.Pauza();
+                                    break;
+                                }
+
+                                var produs = AnsiConsole.Prompt(
+                                    new SelectionPrompt<Matcha>()
+                                        .Title("Alege produsul:")
+                                        .PageSize(10)
+                                        .AddChoices(matcherie.Meniu)
+                                        .UseConverter(p => p.nume));
+
+                                produs.descriere = AnsiConsole.Ask<string>($"Descriere nouă (curent: {produs.descriere}):");
+                                produs.pret = AnsiConsole.Ask<decimal>($"Preț nou (curent: {produs.pret}):");
+                                produs.cantitate = AnsiConsole.Ask<int>($"Stoc nou (curent: {produs.cantitate}):");
+                                produs.calorii = AnsiConsole.Ask<int>($"Calorii noi (curent: {produs.calorii}):");
+
+                                CommonUI.SalvareSistem(sistem);
+                                AnsiConsole.MarkupLine("[green]Produs modificat.[/]");
+                                CommonUI.Pauza();
+                                break;
+                            }
+
+                            case "Delete product":
+                            {
+                                if (matcherie.Meniu.Count == 0)
+                                {
+                                    AnsiConsole.MarkupLine("[yellow]Nu există produse.[/]");
+                                    CommonUI.Pauza();
+                                    break;
+                                }
+
+                                var produs = AnsiConsole.Prompt(
+                                    new SelectionPrompt<Matcha>()
+                                        .Title("Alege produsul de șters:")
+                                        .PageSize(10)
+                                        .AddChoices(matcherie.Meniu)
+                                        .UseConverter(p => p.nume));
+
+                                if (AnsiConsole.Confirm($"Sigur vrei să ștergi [red]{Markup.Escape(produs.nume)}[/]?"))
+                                {
+                                    matcherie.Meniu.Remove(produs);
+                                    CommonUI.SalvareSistem(sistem);
+                                    AnsiConsole.MarkupLine("[green]Produs șters.[/]");
+                                }
+
+                                CommonUI.Pauza();
+                                break;
+                            }
+
+                            case "Back":
+                                inapoi = true;
+                                break;
+                        }
+            }
+        }
+
+                private static Table AfiseazaToateMeniurile(SistemMatcha sistem)
+                {
+                    var t = new Table()
+                        .Border(TableBorder.Rounded)
+                        .Title("[bold]Toate meniurile (rețea)[/]");
+                    t.AddColumn("Matcherie");
+                    t.AddColumn("Produs");
+                    t.AddColumn(new TableColumn("Preț").RightAligned());
+                    t.AddColumn(new TableColumn("Stoc").RightAligned());
+                    t.AddColumn(new TableColumn("Kcal").RightAligned());
+                    t.AddColumn("Descriere");
+
+                    foreach (var m in sistem.Magazine)
+                    {
+                        if (m.Meniu == null || m.Meniu.Count == 0)
+                        {
+                            t.AddRow(
+                                Markup.Escape(m.Nume),
+                                "[grey italic]—[/]",
+                                "-",
+                                "-",
+                                "-",
+                                "[grey]Meniu indisponibil[/]"
+                            );
+                            continue;
+                        }
+
+                        foreach (var p in m.Meniu)
+                        {
+                            t.AddRow(
+                                Markup.Escape(m.Nume),
+                                Markup.Escape(p.nume),
+                                $"{p.pret} RON",
+                                p.cantitate.ToString(),
+                                p.calorii.ToString(),
+                                Markup.Escape(p.descriere ?? "")
+                            );
+                        }
+                    }
+
+                    return t;
+                }
+
+                private static Table AfiseazaMeniuDetaliat(Matcherie matcherie)
+                {
+                    var t = new Table()
+                        .Border(TableBorder.Rounded)
+                        .Title("[bold]Produse[/]");
+                    t.AddColumn("Produs");
+                    t.AddColumn("Descriere");
+                    t.AddColumn(new TableColumn("Preț").RightAligned());
+                    t.AddColumn(new TableColumn("Stoc").RightAligned());
+                    t.AddColumn(new TableColumn("Kcal").RightAligned());
+
+                    if (matcherie.Meniu.Count == 0)
+                    {
+                        t.AddRow("[grey italic]—[/]", "[grey]Meniu gol[/]", "-", "-", "-");
+                        return t;
+                    }
+
+                    foreach (var p in matcherie.Meniu)
+                    {
+                        t.AddRow(
+                            Markup.Escape(p.nume),
+                            Markup.Escape(p.descriere ?? ""),
+                            $"{p.pret} RON",
+                            p.cantitate.ToString(),
+                            p.calorii.ToString()
+                        );
+                    }
+
+                    return t;
+                }
+
+                private static SistemCoordinator? TryGetCoordinator()
+                {
+                    try { return ServiceLocator.Get<SistemCoordinator>(); }
+                    catch { return null; }
+                }
+
 
         private static void AfiseazaMeniuSafe(Matcherie matcherie)
         {

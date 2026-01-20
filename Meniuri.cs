@@ -1,4 +1,6 @@
 using Spectre.Console;
+using System;
+using System.Linq;
 using System.Text;
 
 namespace ConsoleApp5
@@ -9,21 +11,14 @@ namespace ConsoleApp5
         {
             Console.Clear();
 
-            // Heuristică simplă ca să nu “mănânce” ecranul (și să rămână loc pentru prompt)
+            int w = AnsiConsole.Profile.Width;
             int h = AnsiConsole.Profile.Height;
-            int maxMatcherii = h < 32 ? 2 : (h < 40 ? 3 : 4);
-            int maxProdusePerMatcherie = h < 32 ? 2 : (h < 40 ? 3 : 4);
 
-            // Layout 2 coloane
-            var root = new Layout("Root");
-            var left = new Layout("Meniu");
-            var right = new Layout("Profil");
-            root.SplitColumns(left, right);
-            
-            left.Ratio = 2;
-            right.Ratio = 1;
+            // Ca să rămână loc pentru prompt-ul de opțiuni, limităm nr. de matcherii afișate
+            // (produsele sunt toate vizibile în celula “Meniu complet”).
+            int maxMatcherii = h < 30 ? 2 : (h < 38 ? 3 : 5);
 
-            // -------------------- STÂNGA: tabel compact cu matcherii + MENIU per matcherie --------------------
+            // -------------------- STÂNGA: matcherii + TOATE produsele per matcherie --------------------
             var t = new Table()
                 .Border(TableBorder.Rounded)
                 .BorderColor(Color.Green)
@@ -32,15 +27,14 @@ namespace ConsoleApp5
             t.AddColumn("Locație");
             t.AddColumn("Program");
             t.AddColumn(new TableColumn("Locuri libere").RightAligned());
-            t.AddColumn("Meniu (preview)");
+            t.AddColumn("Meniu complet");
 
             if (sistem.Magazine == null || sistem.Magazine.Count == 0)
             {
-                t.AddRow("[red]N/A[/]", "[red]N/A[/]", "-", "[grey]Nu există matcherii[/]");
+                t.AddRow("[red]N/A[/]", "[red]N/A[/]", "-", "[grey]Nu există matcherii în sistem[/]");
             }
             else
             {
-                
                 var list = sistem.Magazine
                     .OrderBy(m => m.Nume)
                     .Take(maxMatcherii)
@@ -56,7 +50,7 @@ namespace ConsoleApp5
                         ? $"[green]{libere}/{cap}[/]"
                         : $"[red]{libere}/{cap}[/]";
 
-                    string meniuCell = BuildMeniuPreview(m, maxProdusePerMatcherie);
+                    string meniuCell = BuildMeniuCompletCell(m);
 
                     t.AddRow(
                         $"[white]{Markup.Escape(m.Nume)}[/]",
@@ -66,14 +60,13 @@ namespace ConsoleApp5
                     );
                 }
 
-                // Dacă există mai multe matcherii decât afișăm
                 if (sistem.Magazine.Count > maxMatcherii)
                 {
                     t.AddRow(
                         "[grey]…[/]",
-                        "[grey](mai multe locații)[/]",
+                        $"[grey](mai multe locații)[/]",
                         "[grey]…[/]",
-                        $"[grey]Afișate {maxMatcherii} din {sistem.Magazine.Count}[/]"
+                        $"[grey]Afișate {maxMatcherii} din {sistem.Magazine.Count} (mărește fereastra pentru mai mult)[/]"
                     );
                 }
             }
@@ -84,7 +77,7 @@ namespace ConsoleApp5
                 .Header("[bold green]Rețea[/]")
                 .Expand();
 
-            // -------------------- DREAPTA: profil scurt --------------------
+            // -------------------- DREAPTA: profil --------------------
             int rezCount = client.Rezervari?.Count ?? 0;
             int ordersCount = client.Istoric?.Count ?? 0;
 
@@ -95,7 +88,7 @@ namespace ConsoleApp5
                 new Markup($"[bold]Rezervări:[/] [yellow]{rezCount}[/]"),
                 new Markup($"[bold]Comenzi:[/] [green]{ordersCount}[/]"),
                 new Rule(),
-                new Markup("[grey]Opțiunile sunt afișate imediat sub dashboard[/]")
+                new Markup("[grey]Alege o opțiune din meniu (mai jos)[/]")
             );
 
             var rightPanel = new Panel(profil)
@@ -104,38 +97,46 @@ namespace ConsoleApp5
                 .Header("[bold cyan]👤 Profil[/]")
                 .Expand();
 
-            left.Update(leftPanel);
-            right.Update(rightPanel);
+            // -------------------- RENDER (Grid, nu Layout) --------------------
+            if (w >= 110)
+            {
+                var grid = new Grid();
+                grid.AddColumn(new GridColumn());
+                grid.AddColumn(new GridColumn());
+                grid.AddRow(leftPanel, rightPanel);
+                AnsiConsole.Write(grid);
 
-            AnsiConsole.Write(root);
+            }
+            else
+            {
+                AnsiConsole.Write(leftPanel);
+                AnsiConsole.WriteLine();
+                AnsiConsole.Write(rightPanel);
+            }
+
             AnsiConsole.WriteLine();
         }
 
-        private static string BuildMeniuPreview(Matcherie m, int maxItems)
+        private static string BuildMeniuCompletCell(Matcherie m)
         {
             if (m.Meniu == null || m.Meniu.Count == 0)
                 return "[grey italic]În curând... (meniu indisponibil)[/]";
 
-            // maxItems produse, restul “… (+X)”
-            int take = Math.Min(maxItems, m.Meniu.Count);
-            int extra = m.Meniu.Count - take;
-
+            // TOATE produsele, multi-line în aceeași celulă
             var sb = new StringBuilder();
 
-            for (int i = 0; i < take; i++)
+            foreach (var p in m.Meniu)
             {
-                var p = m.Meniu[i];
-                sb.Append($"[green]•[/] {Markup.Escape(p.nume)} [grey]({p.pret} RON)[/]");
-                if (i < take - 1) sb.Append('\n');
-            }
-
-            if (extra > 0)
-            {
+                // format compact: nume + pret + stoc + kcal (fără descriere ca să rămână “tight”)
+                sb.Append("[green]•[/] ");
+                sb.Append(Markup.Escape(p.nume));
+                sb.Append($" [grey]({p.pret} RON)[/]");
+                sb.Append($" [grey]| stoc {p.cantitate}[/]");
+                sb.Append($" [grey]| {p.calorii} kcal[/]");
                 sb.Append('\n');
-                sb.Append($"[grey]… (+{extra} produse)[/]");
             }
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd('\n');
         }
     }
 }
