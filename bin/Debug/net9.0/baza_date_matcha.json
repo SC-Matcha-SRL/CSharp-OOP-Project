@@ -43,7 +43,7 @@
       ],
       "Rezervari": [
         {
-          "Id": "1b296374-be49-4c1a-b5df-db0184c3ef4b",
+          "Id": "688b1f8c-c1e7-48d9-9f14-ba6063c0c410",
           "Tip": "Family",
           "Pret": 35,
           "Limitari": "Min 3, max 6",
@@ -52,21 +52,12 @@
           "MatcherieNume": "Matcha Zen"
         },
         {
-          "Id": "f71c0578-1bf6-437a-975c-409aa954ca61",
+          "Id": "88c38c36-3988-4800-988d-ec7358819499",
           "Tip": "Friends",
           "Pret": 25,
           "Limitari": "2-8",
           "Beneficii": "Free water \u002B boardgames",
           "ClientID": "Mara Dima",
-          "MatcherieNume": "Matcha Zen"
-        },
-        {
-          "Id": "81bffbe7-cbb1-4b00-a032-ced47f5feedd",
-          "Tip": "Family",
-          "Pret": 35,
-          "Limitari": "Min 3 people, max 6. Standard duration 2h. Recommended: book at least 12h in advance.",
-          "Beneficii": "Bigger table \u002B quiet area; 10% off a matcha dessert for the group.",
-          "ClientID": "Radu Popescu",
           "MatcherieNume": "Matcha Zen"
         }
       ]
@@ -94,7 +85,7 @@
           "Nume": "Matcha Vodka",
           "Descriere": "Matcha \u002B lime \u002B vodka (18\u002B)",
           "Pret": 34.0,
-          "Cantitate": 38,
+          "Cantitate": 40,
           "Calorii": 220
         },
         {
@@ -117,18 +108,11 @@
           "Pret": 10.0,
           "Cantitate": 180,
           "Calorii": 0
-        },
-        {
-          "Nume": "wqeqww",
-          "Descriere": "qwe",
-          "Pret": 2,
-          "Cantitate": 12,
-          "Calorii": 23
         }
       ],
       "Rezervari": [
         {
-          "Id": "44709a52-8221-45eb-8717-8e07dbeefc20",
+          "Id": "4a2a7108-d438-4319-a711-21a9130924ac",
           "Tip": "Friends",
           "Pret": 25,
           "Limitari": "2-8",
@@ -137,7 +121,7 @@
           "MatcherieNume": "Matcha Odaia"
         },
         {
-          "Id": "6cee1629-5096-47fc-8ef4-2ab518cfcb8c",
+          "Id": "b6fab030-c6b4-4464-883d-e9b2a9769639",
           "Tip": "Birthday",
           "Pret": 55,
           "Limitari": "Min 6, 24h in advance",
@@ -146,7 +130,7 @@
           "MatcherieNume": "Matcha Odaia"
         },
         {
-          "Id": "2c057ec4-3cdf-46dd-814b-9c18ee1b2d8c",
+          "Id": "1a48b519-0c1b-43fd-9aef-535ea1185a27",
           "Tip": "Friends",
           "Pret": 25,
           "Limitari": "2-8",
@@ -158,8 +142,8 @@
     },
     {
       "Nume": "Matcha Harbor",
-      "Program": "9:00-16:00",
-      "Capacitate": 25,
+      "Program": "10:00-20:00",
+      "Capacitate": 18,
       "Meniu": [
         {
           "Nume": "Matcha Ice Cream",
@@ -193,7 +177,7 @@
           "Nume": "Still Water",
           "Descriere": "Cold still water (0 kcal)",
           "Pret": 9.5,
-          "Cantitate": 195,
+          "Cantitate": 200,
           "Calorii": 0
         },
         {
@@ -202,18 +186,11 @@
           "Pret": 10.0,
           "Cantitate": 180,
           "Calorii": 0
-        },
-        {
-          "Nume": "Milktcha",
-          "Descriere": "Pilk with a twist of Matcja",
-          "Pret": 25,
-          "Cantitate": 50,
-          "Calorii": 200
         }
       ],
       "Rezervari": [
         {
-          "Id": "9c2abd9d-eed3-4445-b304-fc84c63cf82d",
+          "Id": "4bedfe6c-679b-41fe-afc4-69f45e1d7bbc",
           "Tip": "Family",
           "Pret": 35,
           "Limitari": "Min 3, max 6",
@@ -230,20 +207,20 @@
       "Email": "andrei@email.com",
       "Istoric": [
         {
-          "Id": "f5df14b1-fc49-4d2f-86a3-0ef7c5878610",
-          "Data": "2026-01-21T15:48:04.1531976+02:00",
+          "Id": "4845436f-ecc8-4ba9-9713-7f7296e8dfaa",
+          "Data": "2026-01-21T16:26:11.2550231+02:00",
           "Suma": 22.5,
           "MatcherieNume": "Matcha Zen"
         },
         {
-          "Id": "55572b93-5e09-4261-954c-bca33f7feb54",
-          "Data": "2026-01-20T15:38:04.1537973+02:00",
+          "Id": "b93faf88-5ef1-4204-929e-b0c609be6e32",
+          "Data": "2026-01-20T16:16:11.2557581+02:00",
           "Suma": 19.9,
           "MatcherieNume": "Matcha Zen"
         },
         {
-          "Id": "c47e6059-183d-45f2-a42b-794a25ef4101",
-          "Data": "2026-01-19T15:28:04.153801+02:00",
+          "Id": "845b86e4-fd9d-4276-9afa-e9df39b377ec",
+          "Data": "2026-01-19T16:06:11.2557639+02:00",
           "Suma": 9.5,
           "MatcherieNume": "Matcha Zen"
         }
@@ -255,14 +232,14 @@
       "Email": "mara@email.com",
       "Istoric": [
         {
-          "Id": "680828a8-726a-4368-aeef-ac603ba9ea89",
-          "Data": "2026-01-21T15:48:04.153803+02:00",
+          "Id": "6c85ac7e-26a8-424e-8bd2-ba744594759f",
+          "Data": "2026-01-21T16:26:11.2557651+02:00",
           "Suma": 24.9,
           "MatcherieNume": "Matcha Odaia"
         },
         {
-          "Id": "03b2d0de-c8be-42be-94d8-53a55e781923",
-          "Data": "2026-01-20T15:38:04.1538034+02:00",
+          "Id": "6411abfc-78d9-4bdc-af3e-b53570a68961",
+          "Data": "2026-01-20T16:16:11.2557655+02:00",
           "Suma": 21.5,
           "MatcherieNume": "Matcha Odaia"
         }
@@ -274,55 +251,33 @@
       "Email": "radu@email.com",
       "Istoric": [
         {
-          "Id": "d7b4914f-13bc-45e0-96b7-ace36d56cfe2",
-          "Data": "2026-01-21T15:48:04.1538038+02:00",
+          "Id": "409c1909-3165-40e6-a509-1744874fde0f",
+          "Data": "2026-01-21T16:26:11.255766+02:00",
           "Suma": 34.0,
           "MatcherieNume": "Matcha Odaia"
         },
         {
-          "Id": "45e4f0e6-8fbf-41bf-9008-6988851739c1",
-          "Data": "2026-01-20T15:38:04.1538041+02:00",
+          "Id": "dcd5a917-2724-4462-b256-193d06395d58",
+          "Data": "2026-01-20T16:16:11.2557664+02:00",
           "Suma": 18.5,
           "MatcherieNume": "Matcha Odaia"
-        },
-        {
-          "Id": "5320e255-a44a-48e0-94f3-781ad95da234",
-          "Data": "2026-01-21T15:49:30.5301727+02:00",
-          "Suma": 68.0,
-          "MatcherieNume": "Matcha Odaia"
-        },
-        {
-          "Id": "741e7b51-9a98-4a44-b333-fcf5b4652d2e",
-          "Data": "2026-01-21T15:49:47.8670862+02:00",
-          "Suma": 47.5,
-          "MatcherieNume": "Matcha Harbor"
         }
       ],
-      "Rezervari": [
-        {
-          "Id": "81bffbe7-cbb1-4b00-a032-ced47f5feedd",
-          "Tip": "Family",
-          "Pret": 35,
-          "Limitari": "Min 3 people, max 6. Standard duration 2h. Recommended: book at least 12h in advance.",
-          "Beneficii": "Bigger table \u002B quiet area; 10% off a matcha dessert for the group.",
-          "ClientID": "Radu Popescu",
-          "MatcherieNume": "Matcha Zen"
-        }
-      ]
+      "Rezervari": []
     },
     {
       "Nume": "Ioana Stoica",
       "Email": "ioana@email.com",
       "Istoric": [
         {
-          "Id": "9b9df610-d79b-4d8d-9ca2-8e3ed9354faa",
-          "Data": "2026-01-21T15:48:04.1538045+02:00",
+          "Id": "4eeafe0f-a672-416a-be23-969efe3868af",
+          "Data": "2026-01-21T16:26:11.2557671+02:00",
           "Suma": 18.0,
           "MatcherieNume": "Matcha Harbor"
         },
         {
-          "Id": "20f40e8c-4016-40b8-a08a-45bfde46643e",
-          "Data": "2026-01-20T15:38:04.1538049+02:00",
+          "Id": "2adff3bb-6c28-43f4-b198-df592e53c0e0",
+          "Data": "2026-01-20T16:16:11.2557675+02:00",
           "Suma": 10.0,
           "MatcherieNume": "Matcha Harbor"
         }
@@ -334,18 +289,12 @@
       "Email": "vlad@email.com",
       "Istoric": [
         {
-          "Id": "3a732859-2874-415d-b40c-317bb9d81610",
-          "Data": "2026-01-21T15:48:04.1538053+02:00",
+          "Id": "a1ff0e4d-8df1-4bc7-87c0-c11e2b2de406",
+          "Data": "2026-01-21T16:26:11.2557687+02:00",
           "Suma": 22.5,
           "MatcherieNume": "Matcha Zen"
         }
       ],
-      "Rezervari": []
-    },
-    {
-      "Nume": "Petre Ispirescu",
-      "Email": "petrisor@gmail.com",
-      "Istoric": [],
       "Rezervari": []
     }
   ],
@@ -359,14 +308,15 @@
       "Nume": "Admin2",
       "AdminId": "ADM02",
       "Parola": "1234"
-    },
-    {
-      "Nume": "Petre",
-      "AdminId": "PTR05",
-      "Parola": "5555"
     }
   ],
   "TipuriRezervari": [
+    {
+      "Nume": "Family",
+      "Pret": 35,
+      "Limitari": "Min 3 people, max 6. Standard duration 2h. Recommended: book at least 12h in advance.",
+      "Beneficii": "Bigger table \u002B quiet area; 10% off a matcha dessert for the group."
+    },
     {
       "Nume": "Friends",
       "Pret": 25,
@@ -375,15 +325,9 @@
     },
     {
       "Nume": "Birthday",
-      "Pret": 25,
-      "Limitari": "Happy Birthday",
-      "Beneficii": "HappyBirthhday"
-    },
-    {
-      "Nume": "Gangbang",
-      "Pret": 200,
-      "Limitari": "The limit is the legality of all the activities done during the reservation",
-      "Beneficii": "Everything at your table, privacy, matcha, chairs, chains, lube, etc"
+      "Pret": 55,
+      "Limitari": "Min 6 people. Requires confirmation at least 24h in advance. Duration 2h 30m.",
+      "Beneficii": "Small decor \u002B message card \u002B mini matcha dessert for the celebrant (while stock lasts)."
     }
   ]
 }
